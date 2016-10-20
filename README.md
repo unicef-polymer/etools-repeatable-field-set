@@ -1,38 +1,25 @@
 # \<etools-repetable-field-set\>
 
 
+## Usage
 
-## Install the Polymer-CLI
+How to use this element ... examples
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
+## Styling
 
-## Viewing Your Application
+Available css variables and mixins used to style this element
 
-```
-$ polymer serve
-```
+## Install
 
-## Building Your Application
+It will be available as a bower package when first version is finished.
 
-```
-$ polymer build
-```
+## Preview element locally
 
-This will create a `build/` folder with `bundled/` and `unbundled/` sub-folders
-containing a bundled (Vulcanized) and unbundled builds, both run through HTML,
-CSS, and JS optimizers.
-
-You can serve the built versions by giving `polymer serve` a folder to serve
-from:
-
-```
-$ polymer serve build/bundled
-```
+Install needed dependencies by running: `$ bower install`.
+Make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `$ polymer serve` to serve your element application locally.
 
 ## Running Tests
 
 ```
 $ polymer test
 ```
-
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.
