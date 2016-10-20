@@ -1,0 +1,103 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<dom-module id="demo-helper">
+  <script>
+    (function() {
+      // jscs:disable
+      'use strict';
+
+      Polymer({
+        is: 'demo-helper',
+
+        properties: {
+          fieldSets: {
+            type: Array,
+            value: [],
+            notify: true
+          },
+          contacts: {
+            type: Array,
+            value: [],
+            notify: true
+          },
+          age: {
+            type: Array,
+            value: [],
+            notify: true
+          }
+        },
+
+        ready: function() {
+          this.set('fieldSets',  [
+            {
+              firstName: 'John',
+              lastName: 'Doe'
+            },
+            {
+              firstName: 'Jane',
+              lastName: 'Doe'
+            },
+            {
+              firstName: 'Mike',
+              lastName: 'Yo'
+            },
+            {
+              firstName: 'Chris',
+              lastName: 'Morocanosu'
+            }
+          ]);
+          this.set('contacts',  [
+            {
+              id: 1,
+              guid: "e1193518-d35e-4d66-8559-35812738b11a",
+              isActive: false,
+              balance: "$3,203.79",
+              picture: "http://placehold.it/32x32",
+              age: 38,
+              eyeColor: "blue",
+              name: "John Doe",
+              gender: "male",
+              company: "ENTALITY",
+              email: "john.doe@entality.com",
+              phone: "+1 (993) 577-3572",
+              address: "334 Strickland Avenue, Brownsville, Puerto Rico, 1583",
+              about: "Ullamco enim adipisicing cupidatat eiusmod Lorem velit est adipisicing ullamco consequat esse nostrud fugiat sunt. Irure incididunt occaecat est laboris Lorem nisi proident mollit enim. Laboris sint et sint ea minim amet dolore eu nisi anim magna voluptate excepteur sit. Incididunt ipsum nulla ut consequat cillum magna culpa cupidatat exercitation dolore nulla qui.\r\n",
+              registered: "2014-03-06T10:32:27 -02:00",
+              latitude: 29.208891,
+              longitude: -44.931244
+            },
+            {
+              id: 2,
+              guid: "e1193518-d35e-4d66-8559-35812738b11a",
+              isActive: false,
+              balance: "$3,203.79",
+              picture: "http://placehold.it/32x32",
+              age: 38,
+              eyeColor: "blue",
+              name: "Jane Doe",
+              gender: "female",
+              company: "ENTALITY",
+              email: "jane.doe@entality.com",
+              phone: "+1 (993) 577-3572",
+              address: "334 Strickland Avenue, Brownsville, Puerto Rico, 1583",
+              about: "Ullamco enim adipisicing cupidatat eiusmod Lorem velit est adipisicing ullamco consequat esse nostrud fugiat sunt. Irure incididunt occaecat est laboris Lorem nisi proident mollit enim. Laboris sint et sint ea minim amet dolore eu nisi anim magna voluptate excepteur sit. Incididunt ipsum nulla ut consequat cillum magna culpa cupidatat exercitation dolore nulla qui.\r\n",
+              registered: "2014-03-06T10:32:27 -02:00",
+              latitude: 29.208891,
+              longitude: -44.931244
+            },
+          ]);
+
+          var opt = [];
+          for (var i = 0; i < 30; i++) {
+            opt.push({
+              value: (i + 18),
+              label: (i + 18)
+            });
+          }
+          this.set('age', opt);
+        }
+      });
+
+    })();
+  </script>
+</dom-module>

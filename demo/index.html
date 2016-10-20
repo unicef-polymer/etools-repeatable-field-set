@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+  <head>
+    <title>etools-repetable-field-set demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../../paper-input/paper-input.html">
+    <link rel="import" href="../../paper-input/paper-textarea.html">
+    <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+    <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+    <link rel="import" href="../../paper-listbox/paper-listbox.html">
+    <link rel="import" href="../../paper-item/paper-item.html">
+
+    <link rel="import" href="demo-helper.html">
+    <link rel="import" href="../etools-repetable-field-set.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles iron-flex iron-flex-alignment">
+      .vertical-section-container {
+        max-width: 900px;
+      }
+      paper-input:first-of-type,
+      .row paper-dropdown-menu {
+        margin-right: 30px;
+      }
+      paper-input {
+        width: calc(50% - 15px)
+      }
+      etools-repetable-field-set {
+        margin-bottom: 30px;
+      }
+      .row {
+        width: 100%;
+      }
+      .row paper-input,
+      .row paper-dropdown-menu {
+        width: calc(100% - 15px)
+      }
+      .row paper-dropdown-menu + paper-input {
+        margin-right: 0;
+      }
+      paper-textarea {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h1>etools-repetable-field-set demo</h1>
+
+      <demo-snippet>
+        <template is="dom-bind">
+          <demo-helper field-sets="{{fieldSets}}"></demo-helper>
+
+          <etools-repetable-field-set title="Repeatable field set no actions" model="{{fieldSets}}" elevation="1" hide-plus hide-vertical-divider>
+            <template is="dom-repeat" items="{{fieldSets}}">
+              <div class$="layout horizontal flex data-row-[[index]]">
+                <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+                <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+              </div>
+            </template>
+          </etools-repetable-field-set>
+        </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template is="dom-bind">
+          <demo-helper field-sets="{{fieldSets}}"></demo-helper>
+          <etools-repetable-field-set title="Repeatable field set with counter and no actions" model="{{fieldSets}}" elevation="1" hide-plus show-counter>
+            <template is="dom-repeat" items="{{fieldSets}}">
+              <div class$="layout horizontal flex data-row-{{index}}">
+                <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+                <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+              </div>
+            </template>
+          </etools-repetable-field-set>
+        </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template is="dom-bind">
+          <demo-helper field-sets="{{fieldSets}}"></demo-helper>
+          <etools-repetable-field-set title="Repeatable field set 1" model="{{fieldSets}}" elevation="1" allow-copy>
+            <template is="dom-repeat" items="{{fieldSets}}">
+              <div class$="layout horizontal flex data-row-{{index}}">
+                <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+                <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+              </div>
+            </template>
+          </etools-repetable-field-set>
+        </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template is="dom-bind">
+          <demo-helper field-sets="{{fieldSets}}"></demo-helper>
+          <etools-repetable-field-set title="Repeatable field set 2" model="{{fieldSets}}" elevation="1" show-counter>
+            <template is="dom-repeat" items="{{fieldSets}}">
+              <div class$="layout horizontal flex data-row-{{index}}">
+                <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+                <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+              </div>
+            </template>
+          </etools-repetable-field-set>
+        </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template is="dom-bind">
+          <demo-helper contacts="{{contacts}}" age="{{age}}"></demo-helper>
+
+          <etools-repetable-field-set title="Repeatable field set 3" model="{{contacts}}" elevation="1" show-counter allow-copy use-loading>
+            <template is="dom-repeat" items="{{contacts}}">
+              <div class$="layout vertical flex data-row-{{index}}">
+                <div class="layout horizontal row">
+                  <paper-input label="Name" value="{{item.name}}"></paper-input>
+                  <paper-input label="Email" value="{{item.email}}"></paper-input>
+                </div>
+                <div class="layout horizontal row">
+                  <paper-dropdown-menu label="Age">
+                    <paper-listbox class="dropdown-content" selected="{{item.age}}" attr-for-selected="value">
+                      <template is="dom-repeat" items="[[age]]" as="contactAge" index-as="ageIndex">
+                        <paper-item value="[[contactAge.value]]">[[contactAge.label]]</paper-item>
+                      </template>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                  <paper-input label="Eye color" value="{{item.eyeColor}}"></paper-input>
+                </div>
+                <div class="layout horizontal row">
+                  <paper-input label="Company" value="{{item.company}}" disabled></paper-input>
+                  <paper-input label="Balance" value="{{item.balance}}" disabled></paper-input>
+                </div>
+                <div class="layout horizontal row">
+                  <paper-input label="Phone" value="{{item.phone}}"></paper-input>
+                  <paper-input label="Registered" value="{{item.registered}}" disabled></paper-input>
+                </div>
+                <div class="layout horizontal row">
+                  <paper-textarea label="Address" value="{{item.address}}"></paper-textarea>
+                </div>
+                <div class="layout horizontal row">
+                  <paper-textarea label="About" value="{{item.about}}"></paper-textarea>
+                </div>
+              </div>
+            </template>
+          </etools-repetable-field-set>
+        </template>
+      </demo-snippet>
+
+    </div>
+
+  </body>
+</html>

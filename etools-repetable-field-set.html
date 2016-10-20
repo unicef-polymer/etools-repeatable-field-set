@@ -1,0 +1,340 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../etools-dialog/etools-dialog.html">
+<link rel="import" href="../etools-loading/etools-loading.html">
+
+<!--
+`etools-repetable-field-set`
+
+
+@demo demo/index.html 
+-->
+
+<dom-module id="etools-repetable-field-set">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        width: 100%;
+        --paper-toolbar-height: 48px;
+        --paper-toolbar-background: var(--repeatable-items-header-bg, #1e86bf);
+        --paper-fab: {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: var(--repeatable-items-add-btn-bg, #8dc63f);
+            z-index: 51;
+        };
+        --paper-toolbar-title: {
+          text-align: center;
+          margin-left: 0;
+          @apply(--repeatable-items-title);
+        };
+      }
+
+      .element-container {
+        @apply(--repeatable-items-element-container);
+      }
+
+      #collapse {
+        position: relative;
+        padding: 30px 0;
+        @apply(--repeatable-items-collapse-container)
+      }
+
+      .item-container {
+        background: #fff;
+        padding: 15px;
+        @apply(--repeatable-items-item-container);
+      }
+      .item-container.has-counter {
+        padding: 8px 15px 6px;
+      }
+      .item-container.item-content {
+        @apply(--repeatable-items-item-content);
+      }
+      .item-container.has-counter .item-content {
+        padding-bottom: 10px;
+        @apply(--repeatable-items-item-content-with-counter);
+      }
+      .vertical-bar {
+        position: relative;
+        height: auto;
+        margin: 24px 23px 0 15px;
+        width: 2px;
+        background: var(--repeatable-items-vertical-divider-bgcolor, #d0d0d0);
+        @apply(--repeatable-items-vertical-divider);
+      }
+
+      .vertical-bar:before {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        position: absolute;
+        top: -30px;
+        left: -11px;
+        background-color: var(--repeatable-items-vertical-divider-bgcolor, #9e9e9e);
+        color: #fff;
+        content: attr(data-count-val);
+        text-align: center;
+        font-size: 11px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        z-index: 40;
+        @apply(--repeatable-items-counter-badge);
+      }
+
+      .vertical-bar[data-count-val=""] {
+        margin-top: 0;
+      }
+
+      .vertical-bar[data-count-val=""]:before {
+        display: none;
+      }
+
+      .item-container:hover .vertical-bar,
+      .item-container:hover .vertical-bar:before {
+        background-color: var(--repeatable-items-vertical-divider-hover, #00aeef);
+      }
+
+      .action {
+        width: 36px;
+        height: 36px;
+        @apply(--repeatable-items-action-btn);
+      }
+
+      .action.delete {
+        color: var(--repeatable-items-delete-btn-color, #ea4022);
+      }
+
+      .action.copy {
+        color: var(--repeatable-items-copy-btn-color, #757575);
+      }
+
+      .actions[hidden] + .vertical-bar:not([hidden]) {
+        margin-left: 19px;
+        @apply(--repeatable-items-lone-vertical-divider);
+      }
+    </style>
+
+    <div class="element-container">
+      <paper-material elevation="[[elevation]]">
+
+        <paper-toolbar hidden$="{{!showHeader}}">
+          <paper-icon-button on-click="_toggle" icon$="[[_getExpandBtnIcon(open)]]"></paper-icon-button>
+          <div class="title">[[title]] <span hidden$="{{showCounter}}">([[model.length]])</span></div>
+
+          <paper-fab hidden$="{{hidePlus}}"
+                     icon="add"
+                     on-tap="_addElement"
+                     hidden$="{{!open}}"
+                     title="Add"></paper-fab>
+        </paper-toolbar>
+
+        <iron-collapse id="collapse" opened>
+          <template is="dom-repeat" items="[[model]]" on-dom-change="_repeaterDomChanges">
+            <div class$="item-container layout horizontal [[_getHasCounterClass(showCounter)]]">
+              <div class="item-actions-container layout horizontal">
+
+                <div class="layout vertical center-justified wrap actions" hidden$="[[hidePlus]]">
+                  <paper-icon-button class="action delete"
+                                     on-tap="_openDeleteConfirmation"
+                                     data-args$="[[index]]"
+                                     icon="cancel"></paper-icon-button>
+                  <paper-icon-button class="action copy"
+                                     hidden$="[[!allowCopy]]"
+                                     on-tap="_copyElement"
+                                     data-args$="[[index]]"
+                                     icon="content-copy"></paper-icon-button>
+                </div>
+
+                <div class="vertical-bar" hidden$="[[hideVerticalDivider]]"
+                     data-count-val$="[[_displayIndex(index, showCounter)]]"></div>
+
+              </div>
+              <div class="item-content layout horizontal flex">
+                <content select="[[_composeItemContentSelector(index)]]"></content>
+              </div>
+            </div>
+          </template>
+
+          <etools-loading active="[[_showLoading]]">[[loadingMsg]]</etools-loading>
+
+        </iron-collapse>
+
+      </paper-material>
+    </div>
+
+    <template is="dom-if" if=[[hidePlus]]">
+      <!-- do not render this if actions are not enabled -->
+      <etools-dialog id="deleteConfirmation"
+                     size="md"
+                     opened="[[openDeleteConfirmation]]"
+                     ok-btn-text="Yes"
+                     cancel-btn-text="No"
+                     on-close="_onDeleteConfirmation"
+                     dialog-title="Delete confirmation">
+        [[deleteConfirmationMessage]]
+      </etools-dialog>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'etools-repetable-field-set',
+
+      properties: {
+        title: {
+          type: String
+        },
+        hidePlus: {
+          type: Boolean,
+          value: false
+        },
+        model: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        open: {
+          type: Boolean,
+          value: true,
+          reflectToAttribute: true
+        },
+        showHeader: {
+          type: Boolean,
+          value: true,
+        },
+        showCounter: {
+          type: Boolean,
+          value: false,
+        },
+        allowCopy: {
+          type: Boolean,
+          value: false
+        },
+        elevation: {
+          type: Number,
+          value: 0
+        },
+        hideVerticalDivider: {
+          type: Boolean,
+          value: false
+        },
+        deleteConfirmationMessage: {
+          type: String,
+          value: 'Are you sure you want to delete this item?'
+        },
+        loadingMsg: {
+          type: String,
+          value: 'Loading items'
+        },
+        useLoading: {
+          type: Boolean,
+          value: false
+        }
+      },
+      _activateLoading: function() {
+        if (this.useLoading) {
+          this._showLoading = true;
+        }
+      },
+      _deactivateLoading: function() {
+        if (this.useLoading) {
+          this._showLoading = false;
+        }
+      },
+      _getHasCounterClass: function(showCounter) {
+        if (showCounter) {
+          return 'has-counter';
+        }
+        return '';
+      },
+      _getItemModelObject: function() {
+        var newObj = {};
+        if (this.model.length > 0 && typeof this.model[0] === 'object') {
+          Object.keys(this.model[0]).forEach(function(property) {
+            newObj[property] = ''; //(this.model[0][property]) ? this.model[0][property] :
+          }.bind(this));
+        }
+        return newObj;
+      },
+      _displayIndex: function(index, showCounter) {
+        if (showCounter) {
+          return index + 1;
+        }
+        return '';
+      },
+      _composeItemContentSelector: function(index) {
+        return '.data-row-' + index;
+      },
+      _addElement: function(e) {
+        if (!this.hidePlus) {
+          this._activateLoading();
+          var newObj = this._getItemModelObject();
+          this.push('model', newObj);
+        }
+      },
+      _openDeleteConfirmation: function(event) {
+        this.elToDeleteIndex = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
+        this.openDeleteConfirmation = true;
+      },
+      _deleteElement: function(index) {
+        if (!this.hidePlus) {
+          if (index !== -1) {
+            this._activateLoading();
+            this.splice('model', index, 1);
+          }
+        }
+      },
+      _copyElement: function(event) {
+        if (!this.hidePlus && this.allowCopy) {
+          this._activateLoading();
+          var index = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
+          var copy = JSON.parse(JSON.stringify(this.model[index]));
+          this.splice('model', index + 1, 0, copy);
+        }
+      },
+      _toggle: function() {
+        this.set('open', !this.open);
+        this.$.collapse.toggle();
+      },
+      _getExpandBtnIcon: function(open) {
+        if (!open) {
+          return 'icons:expand-more';
+        }
+        return 'icons:expand-less';
+      },
+      _onDeleteConfirmation: function(event) {
+        this.openDeleteConfirmation = false;
+        if (event.detail.confirmed === true) {
+          this._deleteElement(this.elToDeleteIndex);
+        }
+        this.elToDeleteIndex = -1;
+      },
+      _repeaterDomChanges: function(event) {
+        this._deactivateLoading();
+      },
+      ready: function() {
+        this._activateLoading();
+      }
+
+    });
+  </script>
+</dom-module>
