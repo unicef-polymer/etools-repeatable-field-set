@@ -15,7 +15,7 @@
 
       <test-fixture id="basic">
         <template is="dom-template">
-          <etools-repetable-field-set title="Repeatable field set no actions" model="{{fieldSets}}" elevation="1" hide-plus hide-vertical-divider>
+          <etools-repetable-field-set title="Repeatable field set no actions" model="{{fieldSets}}">
             <template is="dom-repeat" items="{{fieldSets}}">
               <div class$="layout horizontal flex data-row-[[index]]">
                 <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
@@ -51,10 +51,29 @@
               }
             ]
           });
+          // check element name
           assert.equal(element.is, 'etools-repetable-field-set');
-          console.log(element.is, element.model);
-          assert.equal(typeof element.model, 'object');
-          done();
+
+          // check element model data type
+          assert.equal(Array.isArray(element.model), true);
+
+          var currentModelListLength = element.model.length;
+
+          // wait for dom-repeat then check
+          flush(function() {
+            /**
+             * changes to model can be done because of the notify issue with test-fixture
+             * https://github.com/Polymer/polymer/issues/3307
+             */
+//            element.$$('paper-fab').click();
+//            assert.equal(element.model.length, currentModelListLength + 1);
+
+            listItems = Polymer.dom(element.root).querySelectorAll('.item-container');
+            assert.equal(element.model.length, listItems.length);
+            done();
+          });
+
+
         });
 
       });

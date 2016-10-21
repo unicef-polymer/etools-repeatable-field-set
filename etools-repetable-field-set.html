@@ -20,17 +20,20 @@
 <dom-module id="etools-repetable-field-set">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      [hidden] {
+        display: none !important;
+      }
       :host {
         display: block;
         width: 100%;
         --paper-toolbar-height: 48px;
         --paper-toolbar-background: var(--repeatable-items-header-bg, #1e86bf);
         --paper-fab: {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            background: var(--repeatable-items-add-btn-bg, #8dc63f);
-            z-index: 51;
+          position: absolute;
+          right: 15px;
+          top: 15px;
+          background: var(--repeatable-items-add-btn-bg, #8dc63f);
+          z-index: 51;
         };
         --paper-toolbar-title: {
           text-align: center;
@@ -46,7 +49,7 @@
       #collapse {
         position: relative;
         padding: 30px 0;
-        @apply(--repeatable-items-collapse-container)
+        @apply(--repeatable-items-collapse-container);
       }
 
       .item-container {
@@ -58,7 +61,7 @@
         padding: 8px 15px 6px;
       }
       .item-container.item-content {
-        @apply(--repeatable-items-item-content);
+        @apply(--repeatable-items-item-content)
       }
       .item-container.has-counter .item-content {
         padding-bottom: 10px;
@@ -179,19 +182,6 @@
       </paper-material>
     </div>
 
-    <template is="dom-if" if=[[hidePlus]]">
-      <!-- do not render this if actions are not enabled -->
-      <etools-dialog id="deleteConfirmation"
-                     size="md"
-                     opened="[[openDeleteConfirmation]]"
-                     ok-btn-text="Yes"
-                     cancel-btn-text="No"
-                     on-close="_onDeleteConfirmation"
-                     dialog-title="Delete confirmation">
-        [[deleteConfirmationMessage]]
-      </etools-dialog>
-    </template>
-
   </template>
 
   <script>
@@ -236,6 +226,10 @@
         hideVerticalDivider: {
           type: Boolean,
           value: false
+        },
+        deleteConfirmationTitle: {
+          type: String,
+          value: 'Delete confirmation'
         },
         deleteConfirmationMessage: {
           type: String,
@@ -293,11 +287,11 @@
       },
       _openDeleteConfirmation: function(event) {
         this.elToDeleteIndex = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
-        this.openDeleteConfirmation = true;
+        this.deleteDialog.opened = true;
       },
       _deleteElement: function(index) {
         if (!this.hidePlus) {
-          if (index !== -1) {
+          if (index !== null && typeof index !== 'undefined' && index !== -1) {
             this._activateLoading();
             this.splice('model', index, 1);
           }
@@ -322,7 +316,7 @@
         return 'icons:expand-less';
       },
       _onDeleteConfirmation: function(event) {
-        this.openDeleteConfirmation = false;
+        this.deleteDialog.opened = false;
         if (event.detail.confirmed === true) {
           this._deleteElement(this.elToDeleteIndex);
         }
@@ -331,8 +325,34 @@
       _repeaterDomChanges: function(event) {
         this._deactivateLoading();
       },
+      _createDeleteConfirmationDialog: function() {
+        var deleteConfirmationContent = document.createElement('p');
+        deleteConfirmationContent.innerHTML = this.deleteConfirmationMessage;
+
+        this.deleteDialog = document.createElement('etools-dialog');
+        this.deleteDialog.size = 'md';
+        this.deleteDialog.okBtnText = 'Yes';
+        this.deleteDialog.cancelBtnText = 'No';
+        this.deleteDialog.dialogTitle = this.deleteConfirmationTitle;
+
+        this.deleteDialog.addEventListener('close', function(event) {
+          this._onDeleteConfirmation(event);
+        }.bind(this));
+
+        Polymer.dom(document.querySelector('body')).appendChild(this.deleteDialog);
+        Polymer.dom(this.deleteDialog.root).querySelector('paper-dialog-scrollable').appendChild(deleteConfirmationContent);
+      },
       ready: function() {
         this._activateLoading();
+        if (!this.hidePlus) {
+          this._createDeleteConfirmationDialog();
+        }
+      },
+      detached: function() {
+        if (!this.hidePlus) {
+          // remove delete confirmation dialog when the element is detached
+          Polymer.dom(document.querySelector('body')).removeChild(this.deleteDialog);
+        }
       }
 
     });
