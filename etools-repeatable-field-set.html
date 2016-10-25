@@ -195,8 +195,8 @@ Custom property | Description | Default
                      data-count-val$="[[_displayIndex(index, showCounter)]]"></div>
 
               </div>
-              <div class="item-content layout horizontal flex">
-                <slot name="data-row-[[index]]"></slot>
+              <div class="item-content layout horizontal flex" id="item-[[index]]">
+
               </div>
             </div>
           </template>
@@ -285,6 +285,11 @@ Custom property | Description | Default
         if (!this.hidePlus) {
           var newObj = this._getItemModelObject();
           this.push('model', newObj);
+          this.async(function(){
+            var children = this._getPureChildren();
+            var index = children.length - 1;
+            this.$$('#item-' + index).appendChild(children[index])
+          })
         }
       },
       _openDeleteConfirmation: function(event) {
@@ -294,6 +299,12 @@ Custom property | Description | Default
       _deleteElement: function(index) {
         if (!this.hidePlus) {
           if (index !== null && typeof index !== 'undefined' && index !== -1) {
+            var container = this.$$('#item-' + index);
+            var firstChild = container.firstChild;
+            while ( firstChild ) {
+              container.removeChild(firstChild);
+              firstChild = container.firstChild;
+            }
             this.splice('model', index, 1);
           }
         }
@@ -303,6 +314,10 @@ Custom property | Description | Default
           var index = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
           var copy = JSON.parse(JSON.stringify(this.model[index]));
           this.splice('model', index + 1, 0, copy);
+          this.async(function(){
+            var children = this._getPureChildren();
+            this.$$('#item-' + (index + 1)).appendChild(children[index + 1])
+          })
         }
       },
       _toggle: function() {
@@ -339,10 +354,29 @@ Custom property | Description | Default
         Polymer.dom(document.querySelector('body')).appendChild(this.deleteDialog);
         Polymer.dom(this.deleteDialog.root).querySelector('paper-dialog-scrollable').appendChild(deleteConfirmationContent);
       },
+
+      _printLightDom: function() {
+        var self = this;
+        self.async(function() {
+          var children = self._getPureChildren();
+          children.forEach(function(child, index) {
+            self.$$('#item-' + index).appendChild(child)
+          });
+        });
+      },
+
+      _getPureChildren: function() {
+        return this.getEffectiveChildren().filter(function(item){
+          return item.localName !== 'template';
+        });
+      },
       ready: function() {
         if (!this.hidePlus) {
           this._createDeleteConfirmationDialog();
         }
+      },
+      attached: function() {
+        this._printLightDom();
       },
       detached: function() {
         if (!this.hidePlus) {
