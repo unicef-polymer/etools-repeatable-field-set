@@ -58,9 +58,9 @@
         <template is="dom-bind">
           <demo-helper field-sets="{{fieldSets}}"></demo-helper>
 
-          <etools-repeatable-field-set title="Repeatable field set no actions" model="{{fieldSets}}" elevation="1" hide-plus hide-vertical-divider>
-            <template is="dom-repeat" items="{{fieldSets}}">
-              <div class$="layout horizontal flex data-row-[[index]]">
+          <etools-repeatable-field-set title="Repeatable field set no actions" model="{{fieldSets}}" elevation="4" hide-plus hide-vertical-divider>
+            <template is="dom-repeat" items="[[fieldSets]]">
+              <div class="layout horizontal flex wrap" slot$="data-row-[[index]]">
                 <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
                 <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
               </div>
@@ -74,7 +74,7 @@
           <demo-helper field-sets="{{fieldSets}}"></demo-helper>
           <etools-repeatable-field-set title="Repeatable field set with counter and no actions" model="{{fieldSets}}" elevation="1" hide-plus show-counter>
             <template is="dom-repeat" items="{{fieldSets}}">
-              <div class$="layout horizontal flex data-row-{{index}}">
+              <div class="layout horizontal flex" slot$="data-row-[[index]]">
                 <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
                 <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
               </div>
@@ -88,7 +88,7 @@
           <demo-helper field-sets="{{fieldSets}}"></demo-helper>
           <etools-repeatable-field-set title="Repeatable field set 1" model="{{fieldSets}}" elevation="1" allow-copy>
             <template is="dom-repeat" items="{{fieldSets}}">
-              <div class$="layout horizontal flex data-row-{{index}}">
+              <div class="layout horizontal flex" slot$="data-row-[[index]]">
                 <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
                 <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
               </div>
@@ -102,7 +102,7 @@
           <demo-helper field-sets="{{fieldSets}}"></demo-helper>
           <etools-repeatable-field-set title="Repeatable field set 2" model="{{fieldSets}}" elevation="1" show-counter>
             <template is="dom-repeat" items="{{fieldSets}}">
-              <div class$="layout horizontal flex data-row-{{index}}">
+              <div class="layout horizontal flex" slot$="data-row-[[index]]">
                 <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
                 <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
               </div>
@@ -115,9 +115,9 @@
         <template is="dom-bind">
           <demo-helper contacts="{{contacts}}" age="{{age}}"></demo-helper>
 
-          <etools-repeatable-field-set title="Repeatable field set 3" model="{{contacts}}" elevation="1" show-counter allow-copy use-loading>
+          <etools-repeatable-field-set title="Repeatable field set 3" model="{{contacts}}" elevation="1" show-counter allow-copy>
             <template is="dom-repeat" items="{{contacts}}">
-              <div class$="layout vertical flex data-row-{{index}}">
+              <div class="layout vertical flex" slot$="data-row-[[index]]">
                 <div class="layout horizontal row">
                   <paper-input label="Name" value="{{item.name}}"></paper-input>
                   <paper-input label="Email" value="{{item.email}}"></paper-input>

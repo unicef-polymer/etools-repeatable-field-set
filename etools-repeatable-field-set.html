@@ -8,10 +8,36 @@
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../etools-dialog/etools-dialog.html">
-<link rel="import" href="../etools-loading/etools-loading.html">
 
 <!--
 `etools-repeatable-field-set`
+
+A container that helps to display repeatable data sets with counters and options to manage data: add, modify, delete, copy.
+
+### Usage
+Check demo page or readme file.
+
+### Style
+
+Use this css variables and mixins to style this element.
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--repeatable-items-header-bg` | Header background | `#1e86bf`
+`--repeatable-items-add-btn-bg` | Add new set/row of data button bg color | `#8dc63f`
+`--repeatable-items-title` | Mixin applied to header(title bar) | `{}`
+`--repeatable-items-element-container` | Mixin applied to element container | `{}`
+`--repeatable-items-collapse-container` | Mixin applied to collapsible container | `{}`
+`--repeatable-items-item-container` | Mixin applied to each item/row | `{}`
+`--repeatable-items-item-content` | Mixin applied to each item data fields(right side of delete and copy buttons) | {}
+`--repeatable-items-item-content-with-counter` | Same as `--repeatable-items-item-content` but in case counters are active | `{}`
+`--repeatable-items-vertical-divider` | Mixin applied to vertical divider between actions and data content | `{}`
+`--repeatable-items-vertical-divider-bgcolor` | Vertical divider color | `#9e9e9e`
+`--repeatable-items-counter-badge` | Mixin applied to counter badge | `{}`
+`--repeatable-items-action-btn` | Mixin applied to action buttons (delete and copy) | `{}`
+`--repeatable-items-delete-btn-color` | Delete button color | `ea4022`
+`--repeatable-items-copy-btn-color` | Copy button color | `#757575`
+`--repeatable-items-lone-vertical-divider` | Mixin applied if to divider bar in case action buttons are not displayed | `{}`
 
 
 @demo demo/index.html 
@@ -72,7 +98,7 @@
         height: auto;
         margin: 24px 23px 0 15px;
         width: 2px;
-        background: var(--repeatable-items-vertical-divider-bgcolor, #d0d0d0);
+        background: var(--repeatable-items-vertical-divider-bgcolor, #9e9e9e);
         @apply(--repeatable-items-vertical-divider);
       }
 
@@ -149,7 +175,7 @@
         </paper-toolbar>
 
         <iron-collapse id="collapse" opened>
-          <template is="dom-repeat" items="[[model]]" on-dom-change="_repeaterDomChanges">
+          <template is="dom-repeat" items="[[model]]">
             <div class$="item-container layout horizontal [[_getHasCounterClass(showCounter)]]">
               <div class="item-actions-container layout horizontal">
 
@@ -170,12 +196,10 @@
 
               </div>
               <div class="item-content layout horizontal flex">
-                <content select="[[_composeItemContentSelector(index)]]"></content>
+                <slot name="data-row-[[index]]"></slot>
               </div>
             </div>
           </template>
-
-          <etools-loading active="[[_showLoading]]">[[loadingMsg]]</etools-loading>
 
         </iron-collapse>
 
@@ -234,24 +258,6 @@
         deleteConfirmationMessage: {
           type: String,
           value: 'Are you sure you want to delete this item?'
-        },
-        loadingMsg: {
-          type: String,
-          value: 'Loading items'
-        },
-        useLoading: {
-          type: Boolean,
-          value: false
-        }
-      },
-      _activateLoading: function() {
-        if (this.useLoading) {
-          this._showLoading = true;
-        }
-      },
-      _deactivateLoading: function() {
-        if (this.useLoading) {
-          this._showLoading = false;
         }
       },
       _getHasCounterClass: function(showCounter) {
@@ -275,12 +281,8 @@
         }
         return '';
       },
-      _composeItemContentSelector: function(index) {
-        return '.data-row-' + index;
-      },
       _addElement: function(e) {
         if (!this.hidePlus) {
-          this._activateLoading();
           var newObj = this._getItemModelObject();
           this.push('model', newObj);
         }
@@ -292,14 +294,12 @@
       _deleteElement: function(index) {
         if (!this.hidePlus) {
           if (index !== null && typeof index !== 'undefined' && index !== -1) {
-            this._activateLoading();
             this.splice('model', index, 1);
           }
         }
       },
       _copyElement: function(event) {
         if (!this.hidePlus && this.allowCopy) {
-          this._activateLoading();
           var index = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
           var copy = JSON.parse(JSON.stringify(this.model[index]));
           this.splice('model', index + 1, 0, copy);
@@ -322,9 +322,6 @@
         }
         this.elToDeleteIndex = -1;
       },
-      _repeaterDomChanges: function(event) {
-        this._deactivateLoading();
-      },
       _createDeleteConfirmationDialog: function() {
         var deleteConfirmationContent = document.createElement('p');
         deleteConfirmationContent.innerHTML = this.deleteConfirmationMessage;
@@ -343,7 +340,6 @@
         Polymer.dom(this.deleteDialog.root).querySelector('paper-dialog-scrollable').appendChild(deleteConfirmationContent);
       },
       ready: function() {
-        this._activateLoading();
         if (!this.hidePlus) {
           this._createDeleteConfirmationDialog();
         }
@@ -354,6 +350,7 @@
           Polymer.dom(document.querySelector('body')).removeChild(this.deleteDialog);
         }
       }
+
 
     });
   </script>
