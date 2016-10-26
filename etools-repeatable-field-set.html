@@ -283,11 +283,11 @@ Custom property | Description | Default
         if (!this.hidePlus) {
           var newObj = this._getItemModelObject();
           this.push('model', newObj);
-          this.async(function(){
+          this.async(function() {
             var children = this._getPureChildren();
             var index = children.length - 1;
-            this.$$('#item-' + index).appendChild(children[index])
-          })
+            this.$$('#item-' + index).appendChild(children[index]);
+          });
         }
       },
       _openDeleteConfirmation: function(event) {
@@ -312,10 +312,10 @@ Custom property | Description | Default
           var index = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
           var copy = JSON.parse(JSON.stringify(this.model[index]));
           this.splice('model', index + 1, 0, copy);
-          this.async(function(){
+          this.async(function() {
             var children = this._getPureChildren();
-            this.$$('#item-' + (index + 1)).appendChild(children[index + 1])
-          })
+            this.$$('#item-' + (index + 1)).appendChild(children[index + 1]);
+          });
         }
       },
       _toggle: function() {
@@ -358,7 +358,7 @@ Custom property | Description | Default
         self.async(function() {
           var children = self._getPureChildren();
           children.forEach(function(child, index) {
-            self.$$('#item-' + index).appendChild(child)
+            self.$$('#item-' + index).appendChild(child);
           });
         });
       },
