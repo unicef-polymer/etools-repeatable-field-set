@@ -8,29 +8,58 @@
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../etools-dialog/etools-dialog.html">
-<link rel="import" href="../etools-loading/etools-loading.html">
 
 <!--
-`etools-repetable-field-set`
+`etools-repeatable-field-set`
+
+A container that helps to display repeatable data sets with counters and options to manage data: add, modify, delete, copy.
+
+### Usage
+Check demo page or readme file.
+
+### Style
+
+Use this css variables and mixins to style this element.
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--repeatable-items-header-bg` | Header background | `#1e86bf`
+`--repeatable-items-add-btn-bg` | Add new set/row of data button bg color | `#8dc63f`
+`--repeatable-items-title` | Mixin applied to header(title bar) | `{}`
+`--repeatable-items-element-container` | Mixin applied to element container | `{}`
+`--repeatable-items-collapse-container` | Mixin applied to collapsible container | `{}`
+`--repeatable-items-item-container` | Mixin applied to each item/row | `{}`
+`--repeatable-items-item-content` | Mixin applied to each item data fields(right side of delete and copy buttons) | {}
+`--repeatable-items-item-content-with-counter` | Same as `--repeatable-items-item-content` but in case counters are active | `{}`
+`--repeatable-items-vertical-divider` | Mixin applied to vertical divider between actions and data content | `{}`
+`--repeatable-items-vertical-divider-bgcolor` | Vertical divider color | `#9e9e9e`
+`--repeatable-items-counter-badge` | Mixin applied to counter badge | `{}`
+`--repeatable-items-action-btn` | Mixin applied to action buttons (delete and copy) | `{}`
+`--repeatable-items-delete-btn-color` | Delete button color | `ea4022`
+`--repeatable-items-copy-btn-color` | Copy button color | `#757575`
+`--repeatable-items-lone-vertical-divider` | Mixin applied if to divider bar in case action buttons are not displayed | `{}`
 
 
 @demo demo/index.html 
 -->
 
-<dom-module id="etools-repetable-field-set">
+<dom-module id="etools-repeatable-field-set">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      [hidden] {
+        display: none !important;
+      }
       :host {
         display: block;
         width: 100%;
         --paper-toolbar-height: 48px;
         --paper-toolbar-background: var(--repeatable-items-header-bg, #1e86bf);
         --paper-fab: {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            background: var(--repeatable-items-add-btn-bg, #8dc63f);
-            z-index: 51;
+          position: absolute;
+          right: 15px;
+          top: 15px;
+          background: var(--repeatable-items-add-btn-bg, #8dc63f);
+          z-index: 51;
         };
         --paper-toolbar-title: {
           text-align: center;
@@ -46,7 +75,7 @@
       #collapse {
         position: relative;
         padding: 30px 0;
-        @apply(--repeatable-items-collapse-container)
+        @apply(--repeatable-items-collapse-container);
       }
 
       .item-container {
@@ -58,7 +87,7 @@
         padding: 8px 15px 6px;
       }
       .item-container.item-content {
-        @apply(--repeatable-items-item-content);
+        @apply(--repeatable-items-item-content)
       }
       .item-container.has-counter .item-content {
         padding-bottom: 10px;
@@ -69,7 +98,7 @@
         height: auto;
         margin: 24px 23px 0 15px;
         width: 2px;
-        background: var(--repeatable-items-vertical-divider-bgcolor, #d0d0d0);
+        background: var(--repeatable-items-vertical-divider-bgcolor, #9e9e9e);
         @apply(--repeatable-items-vertical-divider);
       }
 
@@ -146,7 +175,7 @@
         </paper-toolbar>
 
         <iron-collapse id="collapse" opened>
-          <template is="dom-repeat" items="[[model]]" on-dom-change="_repeaterDomChanges">
+          <template is="dom-repeat" items="[[model]]">
             <div class$="item-container layout horizontal [[_getHasCounterClass(showCounter)]]">
               <div class="item-actions-container layout horizontal">
 
@@ -166,38 +195,21 @@
                      data-count-val$="[[_displayIndex(index, showCounter)]]"></div>
 
               </div>
-              <div class="item-content layout horizontal flex">
-                <content select="[[_composeItemContentSelector(index)]]"></content>
-              </div>
+              <div class="item-content layout horizontal flex" id="item-[[index]]"></div>
             </div>
           </template>
-
-          <etools-loading active="[[_showLoading]]">[[loadingMsg]]</etools-loading>
 
         </iron-collapse>
 
       </paper-material>
     </div>
 
-    <template is="dom-if" if=[[hidePlus]]">
-      <!-- do not render this if actions are not enabled -->
-      <etools-dialog id="deleteConfirmation"
-                     size="md"
-                     opened="[[openDeleteConfirmation]]"
-                     ok-btn-text="Yes"
-                     cancel-btn-text="No"
-                     on-close="_onDeleteConfirmation"
-                     dialog-title="Delete confirmation">
-        [[deleteConfirmationMessage]]
-      </etools-dialog>
-    </template>
-
   </template>
 
   <script>
     Polymer({
 
-      is: 'etools-repetable-field-set',
+      is: 'etools-repeatable-field-set',
 
       properties: {
         title: {
@@ -237,27 +249,13 @@
           type: Boolean,
           value: false
         },
+        deleteConfirmationTitle: {
+          type: String,
+          value: 'Delete confirmation'
+        },
         deleteConfirmationMessage: {
           type: String,
           value: 'Are you sure you want to delete this item?'
-        },
-        loadingMsg: {
-          type: String,
-          value: 'Loading items'
-        },
-        useLoading: {
-          type: Boolean,
-          value: false
-        }
-      },
-      _activateLoading: function() {
-        if (this.useLoading) {
-          this._showLoading = true;
-        }
-      },
-      _deactivateLoading: function() {
-        if (this.useLoading) {
-          this._showLoading = false;
         }
       },
       _getHasCounterClass: function(showCounter) {
@@ -281,34 +279,43 @@
         }
         return '';
       },
-      _composeItemContentSelector: function(index) {
-        return '.data-row-' + index;
-      },
       _addElement: function(e) {
         if (!this.hidePlus) {
-          this._activateLoading();
           var newObj = this._getItemModelObject();
           this.push('model', newObj);
+          this.async(function() {
+            var children = this._getPureChildren();
+            var index = children.length - 1;
+            this.$$('#item-' + index).appendChild(children[index]);
+          });
         }
       },
       _openDeleteConfirmation: function(event) {
         this.elToDeleteIndex = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
-        this.openDeleteConfirmation = true;
+        this.deleteDialog.opened = true;
       },
       _deleteElement: function(index) {
         if (!this.hidePlus) {
-          if (index !== -1) {
-            this._activateLoading();
+          if (index !== null && typeof index !== 'undefined' && index !== -1) {
+            var container = this.$$('#item-' + index);
+            var firstChild = container.firstChild;
+            while ( firstChild ) {
+              container.removeChild(firstChild);
+              firstChild = container.firstChild;
+            }
             this.splice('model', index, 1);
           }
         }
       },
       _copyElement: function(event) {
         if (!this.hidePlus && this.allowCopy) {
-          this._activateLoading();
           var index = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
           var copy = JSON.parse(JSON.stringify(this.model[index]));
           this.splice('model', index + 1, 0, copy);
+          this.async(function() {
+            var children = this._getPureChildren();
+            this.$$('#item-' + (index + 1)).appendChild(children[index + 1]);
+          });
         }
       },
       _toggle: function() {
@@ -322,18 +329,60 @@
         return 'icons:expand-less';
       },
       _onDeleteConfirmation: function(event) {
-        this.openDeleteConfirmation = false;
+        this.deleteDialog.opened = false;
         if (event.detail.confirmed === true) {
           this._deleteElement(this.elToDeleteIndex);
         }
         this.elToDeleteIndex = -1;
       },
-      _repeaterDomChanges: function(event) {
-        this._deactivateLoading();
+      _createDeleteConfirmationDialog: function() {
+        var deleteConfirmationContent = document.createElement('p');
+        deleteConfirmationContent.innerHTML = this.deleteConfirmationMessage;
+
+        this.deleteDialog = document.createElement('etools-dialog');
+        this.deleteDialog.size = 'md';
+        this.deleteDialog.okBtnText = 'Yes';
+        this.deleteDialog.cancelBtnText = 'No';
+        this.deleteDialog.dialogTitle = this.deleteConfirmationTitle;
+
+        this.deleteDialog.addEventListener('close', function(event) {
+          this._onDeleteConfirmation(event);
+        }.bind(this));
+
+        Polymer.dom(document.querySelector('body')).appendChild(this.deleteDialog);
+        Polymer.dom(this.deleteDialog.root).querySelector('paper-dialog-scrollable').appendChild(deleteConfirmationContent);
+      },
+
+      _printLightDom: function() {
+        var self = this;
+        self.async(function() {
+          var children = self._getPureChildren();
+          children.forEach(function(child, index) {
+            self.$$('#item-' + index).appendChild(child);
+          });
+        });
+      },
+
+      _getPureChildren: function() {
+        return this.getEffectiveChildren().filter(function(item){
+          return item.localName !== 'template';
+        });
       },
       ready: function() {
-        this._activateLoading();
+        if (!this.hidePlus) {
+          this._createDeleteConfirmationDialog();
+        }
+      },
+      attached: function() {
+        this._printLightDom();
+      },
+      detached: function() {
+        if (!this.hidePlus) {
+          // remove delete confirmation dialog when the element is detached
+          Polymer.dom(document.querySelector('body')).removeChild(this.deleteDialog);
+        }
       }
+
 
     });
   </script>

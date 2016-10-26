@@ -1,0 +1,90 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>etools-repeatable-field-set test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../etools-repeatable-field-set.html">
+    <link rel="import" href="../demo/demo-helper.html">
+  </head>
+  <body>
+
+      <test-fixture id="basic">
+        <template is="dom-template">
+          <etools-repeatable-field-set title="Repeatable field set no actions" model="{{fieldSets}}">
+            <template is="dom-repeat" items="{{fieldSets}}">
+              <div class$="layout horizontal flex data-row-[[index]]">
+                <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+                <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+              </div>
+            </template>
+          </etools-repeatable-field-set>
+        </template>
+      </test-fixture>
+
+
+    <script>
+      suite('etools-repeatable-field-set', function() {
+
+        test('instantiating the element works', function(done) {
+          var element = fixture('basic', {
+            fieldSets: [
+              {
+                firstName: 'John',
+                lastName: 'Doe'
+              },
+              {
+                firstName: 'Jane',
+                lastName: 'Doe'
+              },
+              {
+                firstName: 'Mike',
+                lastName: 'Yo'
+              },
+              {
+                firstName: 'Chris',
+                lastName: 'Morocanosu'
+              }
+            ]
+          });
+          // check element name
+          assert.equal(element.is, 'etools-repeatable-field-set');
+
+          // check element model data type
+          assert.equal(Array.isArray(element.model), true);
+
+          assert.equal(element.hidePlus, false);
+
+          assert.equal(element.showCounter, false);
+
+          assert.equal(element.showHeader, true);
+
+          assert.equal(element.allowCopy, false);
+
+          assert.equal(element.elevation, 0);
+
+          // var currentModelListLength = element.model.length;
+          /**
+           * changes to model can be done because of the notify issue with test-fixture
+           * https://github.com/Polymer/polymer/issues/3307
+           */
+          // element.$$('paper-fab').click();
+          // assert.equal(element.model.length, currentModelListLength + 1);
+
+          // wait for dom-repeat then check
+          flush(function() {
+            listItems = Polymer.dom(element.root).querySelectorAll('.item-container');
+            assert.equal(element.model.length, listItems.length);
+            done();
+          });
+
+        });
+
+      });
+    </script>
+  </body>
+</html>
