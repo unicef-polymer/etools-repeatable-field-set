@@ -45,7 +45,7 @@ Custom property | Description | Default
 
 <dom-module id="etools-repeatable-field-set">
   <template>
-    <style include="iron-flex iron-flex-alignment">
+    <style include="iron-flex iron-flex-alignment iron-flex-factors">
       [hidden] {
         display: none !important;
       }
@@ -195,9 +195,7 @@ Custom property | Description | Default
                      data-count-val$="[[_displayIndex(index, showCounter)]]"></div>
 
               </div>
-              <div class="item-content layout horizontal flex">
-                <slot name="data-row-[[index]]"></slot>
-              </div>
+              <div class="item-content layout horizontal flex" id="item-[[index]]"></div>
             </div>
           </template>
 
@@ -258,6 +256,14 @@ Custom property | Description | Default
         deleteConfirmationMessage: {
           type: String,
           value: 'Are you sure you want to delete this item?'
+        },
+        _itemCounter: {
+          type: Number,
+          value: 0
+        },
+        _isCopy: {
+          type: Number,
+          value: -1
         }
       },
       _getHasCounterClass: function(showCounter) {
@@ -294,6 +300,13 @@ Custom property | Description | Default
       _deleteElement: function(index) {
         if (!this.hidePlus) {
           if (index !== null && typeof index !== 'undefined' && index !== -1) {
+            var container = this.$$('#item-' + index);
+            var firstChild = container.firstChild;
+            while ( firstChild ) {
+              container.removeChild(firstChild);
+              firstChild = container.firstChild;
+            }
+            this._itemCounter -= 1;
             this.splice('model', index, 1);
           }
         }
@@ -302,6 +315,7 @@ Custom property | Description | Default
         if (!this.hidePlus && this.allowCopy) {
           var index = parseInt(Polymer.dom(event).localTarget.getAttribute('data-args'), 10);
           var copy = JSON.parse(JSON.stringify(this.model[index]));
+          this._isCopy = index + 1;
           this.splice('model', index + 1, 0, copy);
         }
       },
@@ -339,10 +353,31 @@ Custom property | Description | Default
         Polymer.dom(document.querySelector('body')).appendChild(this.deleteDialog);
         Polymer.dom(this.deleteDialog.root).querySelector('paper-dialog-scrollable').appendChild(deleteConfirmationContent);
       },
+
+      _printLightDom: function(children) {
+        var self = this;
+        if(this._isCopy !== -1 ) {
+          this._itemCounter = this._isCopy;
+          this._isCopy = -1;
+        }
+          children.forEach(function(child) {
+            self.$$('#item-' + self._itemCounter).appendChild(child);
+            self._itemCounter += 1;
+          });
+      },
       ready: function() {
         if (!this.hidePlus) {
           this._createDeleteConfirmationDialog();
         }
+      },
+      attached: function() {
+        Polymer.dom(this).observeNodes(function(info) {
+          var addedChildren = info.addedNodes.filter(function(item) {
+            return item.localName !== 'template' && item.nodeName !== '#text';
+          });
+          this._printLightDom(addedChildren)
+        });
+
       },
       detached: function() {
         if (!this.hidePlus) {

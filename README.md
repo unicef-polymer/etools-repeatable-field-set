@@ -2,21 +2,23 @@
 
 A container that helps to display repeatable data sets with counters and options to manage data: add, modify, delete(with confirmation), copy.
 
-The development for this element it's on hold for now because of compatibility issues on IE11 and Edge browsers.
+### Element properties
 
-You can still use it and customize it or reuse it's functionality as you need in your app. 
+* allowCopy - Boolean, default: false
+* deleteConfirmationMessage - String, default: Are you sure you want to delete this item?
+* deleteConfirmationTitle - String, default: Delete confirmation
+* elevation - Number, default: 0
+* hidePlus - Boolean, default: false
+* hideVerticalDivider - Boolean, default: false
+* model - Array, default: [] – notifies
+* open - Boolean, default: true
+* showCounter - Boolean, default: false
+* showHeader - Boolean, default: true
+* title - String
 
 ## Usage
 
-First you need to add this element to your app, edit `etools-repeatable-field-set.html` and add your data model fields
-in the div with `class="item-content"` by replacing
-```html
- `<slot name="data-row-[[index]]"></slot>
-```
-with your content fields.
-
-
-Then use it like this:
+Examples: 
 
 ```html
 <etools-repeatable-field-set 
@@ -24,27 +26,52 @@ Then use it like this:
     model="{{fieldSets}}" 
     elevation="0" 
     hide-plus
-    show-counter></etools-repeatable-field-set>
+    show-counter>
+    
+    <!-- A repeater that will display your fields as you want -->
+    <template is="dom-repeat" items="[[fieldSets]]">
+      <div class="layout horizontal flex wrap">
+        <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+        <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+      </div>
+    </template>
+    
+</etools-repeatable-field-set>
 
 <etools-repeatable-field-set 
   title="Repeatable field title" 
   model="{{fieldSets}}" 
   elevation="4" 
   hide-plus 
-  hide-vertical-divider></etools-repeatable-field-set>
+  hide-vertical-divider>
+  
+  <!-- A repeater that will display your fields as you want -->
+  <template is="dom-repeat" items="[[fieldSets]]"> ... </template>
+  
+</etools-repeatable-field-set>
   
 <etools-repeatable-field-set 
   title="Repeatable field title" 
   model="{{fieldSets}}" 
   elevation="2" 
-  allow-copy></etools-repeatable-field-set>
+  allow-copy>
+  
+  <!-- A repeater that will display your fields as you want -->
+  <template is="dom-repeat" items="[[fieldSets]]"> ... </template>
+    
+</etools-repeatable-field-set>
   
 <etools-repeatable-field-set 
   title="Repeatable field title" 
   model="{{fieldSets}}" 
   elevation="2" 
   show-counter
-  allow-copy></etools-repeatable-field-set>
+  allow-copy>
+  
+  <!-- A repeater that will display your fields as you want -->
+   <template is="dom-repeat" items="[[fieldSets]]"> ... </template>
+    
+</etools-repeatable-field-set>
 ``` 
 
 ## Styling
@@ -72,8 +99,9 @@ Custom property | Description | Default
 
 ## Install
 
-Bower package not available.
-Download the source code or clone the repository and add it to your app.
+```bash
+$ bower install --save etools-repeatable-field-set
+```
 
 ## Preview element locally
 

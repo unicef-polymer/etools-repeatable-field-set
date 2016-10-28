@@ -1,5 +1,8 @@
 {
   "name": "etools-repeatable-field-set",
+  "description": "A container that helps to display repeatable data sets with counters and options to manage data: add, modify, delete(with confirmation), copy.",
+  "version": "1.0.0",
+  "license": "https://github.com/unicef-polymer/etools-repeatable-field-set/blob/master/LICENSE.md",
   "main": "etools-repeatable-field-set.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
