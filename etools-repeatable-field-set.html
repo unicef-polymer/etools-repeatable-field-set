@@ -167,11 +167,10 @@ Custom property | Description | Default
           <paper-icon-button on-click="_toggle" icon$="[[_getExpandBtnIcon(open)]]"></paper-icon-button>
           <div class="title">[[title]] <span hidden$="{{showCounter}}">([[model.length]])</span></div>
 
-          <paper-fab hidden$="{{hidePlus}}"
-                     icon="add"
-                     on-tap="_addElement"
-                     hidden$="{{!open}}"
-                     title="Add"></paper-fab>
+          <paper-fab hidden$="{{hideFab}}"
+            icon="add"
+            on-tap="_addElement"
+            title="Add"></paper-fab>
         </paper-toolbar>
 
         <iron-collapse id="collapse" opened>
@@ -181,18 +180,18 @@ Custom property | Description | Default
 
                 <div class="layout vertical center-justified wrap actions" hidden$="[[hidePlus]]">
                   <paper-icon-button class="action delete"
-                                     on-tap="_openDeleteConfirmation"
-                                     data-args$="[[index]]"
-                                     icon="cancel"></paper-icon-button>
+                    on-tap="_openDeleteConfirmation"
+                    data-args$="[[index]]"
+                    icon="cancel"></paper-icon-button>
                   <paper-icon-button class="action copy"
-                                     hidden$="[[!allowCopy]]"
-                                     on-tap="_copyElement"
-                                     data-args$="[[index]]"
-                                     icon="content-copy"></paper-icon-button>
+                    hidden$="[[!allowCopy]]"
+                    on-tap="_copyElement"
+                    data-args$="[[index]]"
+                    icon="content-copy"></paper-icon-button>
                 </div>
 
                 <div class="vertical-bar" hidden$="[[hideVerticalDivider]]"
-                     data-count-val$="[[_displayIndex(index, showCounter)]]"></div>
+                  data-count-val$="[[_displayIndex(index, showCounter)]]"></div>
 
               </div>
               <div class="item-content layout horizontal flex" id="item-[[index]]"></div>
@@ -218,6 +217,10 @@ Custom property | Description | Default
         hidePlus: {
           type: Boolean,
           value: false
+        },
+        hideFab: {
+          type: Boolean,
+          computed: '_computeHideFab(hidePlus, open)'
         },
         model: {
           type: Array,
@@ -265,6 +268,9 @@ Custom property | Description | Default
           type: Number,
           value: -1
         }
+      },
+      _computeHideFab: function(hidePlus, open) {
+        return hidePlus && open;
       },
       _getHasCounterClass: function(showCounter) {
         if (showCounter) {
@@ -360,10 +366,12 @@ Custom property | Description | Default
           this._itemCounter = this._isCopy;
           this._isCopy = -1;
         }
-          children.forEach(function(child) {
+        children.forEach(function(child) {
+          self.async(function() {
             self.$$('#item-' + self._itemCounter).appendChild(child);
             self._itemCounter += 1;
-          });
+          })
+        });
       },
       ready: function() {
         if (!this.hidePlus) {
