@@ -368,8 +368,11 @@ Custom property | Description | Default
         }
         children.forEach(function(child) {
           self.async(function() {
-            self.$$('#item-' + self._itemCounter).appendChild(child);
-            self._itemCounter += 1;
+            var currentItem = self.$$('#item-' + self._itemCounter);
+            if(currentItem) {
+            currentItem.appendChild(child);
+              self._itemCounter += 1;
+            }
           })
         });
       },
