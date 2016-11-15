@@ -225,7 +225,8 @@ Custom property | Description | Default
         model: {
           type: Array,
           notify: true,
-          value: []
+          value: [],
+          observer: '_modelObserver'
         },
         open: {
           type: Boolean,
@@ -267,6 +268,16 @@ Custom property | Description | Default
         _isCopy: {
           type: Number,
           value: -1
+        }
+      },
+      _modelObserver: function(model) {
+        if(!model) {
+          this._itemCounter = 0;
+        }
+        if(model && model.length -1 !== this._itemCounter) {
+          for(var i = 0; i < this._itemCounter; i++ ){
+            this._deleteElement(i);
+          }
         }
       },
       _computeHideFab: function(hidePlus, open) {
@@ -367,13 +378,11 @@ Custom property | Description | Default
           this._isCopy = -1;
         }
         children.forEach(function(child) {
-          self.async(function() {
             var currentItem = self.$$('#item-' + self._itemCounter);
             if(currentItem) {
             currentItem.appendChild(child);
               self._itemCounter += 1;
             }
-          })
         });
       },
       ready: function() {
