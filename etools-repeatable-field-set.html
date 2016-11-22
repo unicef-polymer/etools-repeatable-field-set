@@ -282,7 +282,7 @@ Custom property | Description | Default
         }
       },
       _computeHideFab: function(hidePlus, open) {
-        return hidePlus && open;
+        return hidePlus || !open;
       },
       _getHasCounterClass: function(showCounter) {
         if (showCounter) {
