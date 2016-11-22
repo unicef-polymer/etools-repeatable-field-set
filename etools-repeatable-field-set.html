@@ -173,7 +173,7 @@ Custom property | Description | Default
             title="Add"></paper-fab>
         </paper-toolbar>
 
-        <iron-collapse id="collapse" opened>
+        <iron-collapse id="collapse" opened="{{open}}">
           <template is="dom-repeat" items="[[model]]">
             <div class$="item-container layout horizontal [[_getHasCounterClass(showCounter)]]">
               <div class="item-actions-container layout horizontal">
@@ -231,7 +231,8 @@ Custom property | Description | Default
         open: {
           type: Boolean,
           value: true,
-          reflectToAttribute: true
+          reflectToAttribute: true,
+          notify: true,
         },
         showHeader: {
           type: Boolean,
@@ -338,7 +339,6 @@ Custom property | Description | Default
       },
       _toggle: function() {
         this.set('open', !this.open);
-        this.$.collapse.toggle();
       },
       _getExpandBtnIcon: function(open) {
         if (!open) {

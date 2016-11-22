@@ -71,6 +71,21 @@
 
       <demo-snippet>
         <template is="dom-bind">
+          <demo-helper field-sets="{{fieldSets}}" false-value="{{falseValue}}"></demo-helper>
+
+          <etools-repeatable-field-set title="Repeatable field set, default closed" open="{{falseValue}}" model="{{fieldSets}}" elevation="4" hide-plus hide-vertical-divider>
+            <template is="dom-repeat" items="[[fieldSets]]">
+              <div class="layout horizontal flex wrap">
+                <paper-input label="First Name" value="{{item.firstName}}"></paper-input>
+                <paper-input label="Last Name" value="{{item.lastName}}"></paper-input>
+              </div>
+            </template>
+          </etools-repeatable-field-set>
+        </template>
+      </demo-snippet>
+
+      <demo-snippet>
+        <template is="dom-bind">
           <demo-helper field-sets="{{fieldSets}}"></demo-helper>
           <etools-repeatable-field-set title="Repeatable field set with counter and no actions" model="{{fieldSets}}" elevation="1" hide-plus show-counter>
             <template is="dom-repeat" items="{{fieldSets}}">
