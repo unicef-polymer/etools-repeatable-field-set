@@ -165,7 +165,7 @@ Custom property | Description | Default
 
         <paper-toolbar hidden$="{{!showHeader}}">
           <paper-icon-button on-click="_toggle" icon$="[[_getExpandBtnIcon(open)]]"></paper-icon-button>
-          <div class="title">[[title]] <span hidden$="{{showCounter}}">([[model.length]])</span></div>
+          <div class="title">[[title]] <span hidden$="{{!showCounter}}">([[model.length]])</span></div>
 
           <paper-fab hidden$="{{hideFab}}"
             icon="add"
@@ -173,7 +173,7 @@ Custom property | Description | Default
             title="Add"></paper-fab>
         </paper-toolbar>
 
-        <iron-collapse id="collapse" opened>
+        <iron-collapse id="collapse" opened="{{open}}">
           <template is="dom-repeat" items="[[model]]">
             <div class$="item-container layout horizontal [[_getHasCounterClass(showCounter)]]">
               <div class="item-actions-container layout horizontal">
@@ -231,7 +231,8 @@ Custom property | Description | Default
         open: {
           type: Boolean,
           value: true,
-          reflectToAttribute: true
+          reflectToAttribute: true,
+          notify: true,
         },
         showHeader: {
           type: Boolean,
@@ -281,7 +282,7 @@ Custom property | Description | Default
         }
       },
       _computeHideFab: function(hidePlus, open) {
-        return hidePlus && open;
+        return hidePlus || !open;
       },
       _getHasCounterClass: function(showCounter) {
         if (showCounter) {
@@ -338,7 +339,6 @@ Custom property | Description | Default
       },
       _toggle: function() {
         this.set('open', !this.open);
-        this.$.collapse.toggle();
       },
       _getExpandBtnIcon: function(open) {
         if (!open) {
