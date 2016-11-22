@@ -165,7 +165,7 @@ Custom property | Description | Default
 
         <paper-toolbar hidden$="{{!showHeader}}">
           <paper-icon-button on-click="_toggle" icon$="[[_getExpandBtnIcon(open)]]"></paper-icon-button>
-          <div class="title">[[title]] <span hidden$="{{showCounter}}">([[model.length]])</span></div>
+          <div class="title">[[title]] <span hidden$="{{!showCounter}}">([[model.length]])</span></div>
 
           <paper-fab hidden$="{{hideFab}}"
             icon="add"
