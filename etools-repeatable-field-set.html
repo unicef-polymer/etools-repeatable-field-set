@@ -377,6 +377,12 @@ Custom property | Description | Default
           this._itemCounter = this._isCopy;
           this._isCopy = -1;
         }
+        //this is to keep the counter in sync with the local dom,
+        // it can happen that they go out of sync. this prevent two element on the same row
+        var siblings = Polymer.dom(self.root).querySelectorAll('.item-content');
+        if(siblings.length !== self._itemCounter) {
+          self._itemCounter = siblings.length - 1;
+        }
         children.forEach(function(child) {
             var currentItem = self.$$('#item-' + self._itemCounter);
             if(currentItem) {
