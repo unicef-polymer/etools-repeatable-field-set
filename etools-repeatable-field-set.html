@@ -382,7 +382,7 @@ Custom property | Description | Default
         var siblings = Polymer.dom(self.root).querySelectorAll('.item-content').filter(function(node) {
           return node.childNodes.length > 0;
         });
-        self._itemCounter = siblings.length !== 0 ? (siblings.length - 1) : 0;
+        self._itemCounter = siblings.length
         children.forEach(function(child) {
             var currentItem = self.$$('#item-' + self._itemCounter);
             if(currentItem) {
