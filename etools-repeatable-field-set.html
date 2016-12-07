@@ -40,7 +40,7 @@ Custom property | Description | Default
 `--repeatable-items-lone-vertical-divider` | Mixin applied if to divider bar in case action buttons are not displayed | `{}`
 
 
-@demo demo/index.html 
+@demo demo/index.html
 -->
 
 <dom-module id="etools-repeatable-field-set">
@@ -379,10 +379,10 @@ Custom property | Description | Default
         }
         //this is to keep the counter in sync with the local dom,
         // it can happen that they go out of sync. this prevent two element on the same row
-        var siblings = Polymer.dom(self.root).querySelectorAll('.item-content');
-        if(siblings.length !== self._itemCounter) {
-          self._itemCounter = siblings.length - 1;
-        }
+        var siblings = Polymer.dom(self.root).querySelectorAll('.item-content').filter(function(node) {
+          return node.childNodes.length > 0;
+        });
+        self._itemCounter = siblings.length
         children.forEach(function(child) {
             var currentItem = self.$$('#item-' + self._itemCounter);
             if(currentItem) {
