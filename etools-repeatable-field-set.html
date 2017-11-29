@@ -170,7 +170,7 @@ Custom property | Description | Default
 
         <paper-toolbar hidden$="{{!showHeader}}">
           <paper-icon-button on-click="_toggle" icon$="[[_getExpandBtnIcon(open)]]"></paper-icon-button>
-          <div class="title">[[title]] <span hidden$="{{!showCounter}}">([[model.length]])</span><span class="show-optional" hidden$="{{!showOptional}}"> Optional</span></div>
+          <div class="title">[[title]] <span hidden$="{{!showCounter}}">([[model.length]])</span><span class="show-optional"> [[optionalSecondary]]</span></div>
 
         </paper-toolbar>
 
@@ -248,9 +248,9 @@ Custom property | Description | Default
           type: Boolean,
           value: false,
         },
-        showOptional: {
-          type: Boolean,
-          value: false
+        optionalSecondary: {
+          type: String,
+          value: ""
         },
         allowCopy: {
           type: Boolean,
