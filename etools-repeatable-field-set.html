@@ -158,6 +158,11 @@ Custom property | Description | Default
         margin-left: 19px;
         @apply(--repeatable-items-lone-vertical-divider);
       }
+      .show-optional {
+        font-size: 14px;
+        opacity: 0.6;
+        line-height: 20px;
+      }
     </style>
 
     <div class="element-container">
@@ -165,7 +170,7 @@ Custom property | Description | Default
 
         <paper-toolbar hidden$="{{!showHeader}}">
           <paper-icon-button on-click="_toggle" icon$="[[_getExpandBtnIcon(open)]]"></paper-icon-button>
-          <div class="title">[[title]] <span hidden$="{{!showCounter}}">([[model.length]])</span></div>
+          <div class="title">[[title]] <span hidden$="{{!showCounter}}">([[model.length]])</span><span class="show-optional"> [[optionalSecondary]]</span></div>
 
         </paper-toolbar>
 
@@ -242,6 +247,10 @@ Custom property | Description | Default
         showCounter: {
           type: Boolean,
           value: false,
+        },
+        optionalSecondary: {
+          type: String,
+          value: ""
         },
         allowCopy: {
           type: Boolean,
