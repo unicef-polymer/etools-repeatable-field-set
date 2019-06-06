@@ -364,9 +364,6 @@ Custom property | Description | Default
         this.elToDeleteIndex = -1;
       },
       _createDeleteConfirmationDialog: function() {
-        var deleteConfirmationContent = document.createElement('p');
-        deleteConfirmationContent.innerHTML = this.deleteConfirmationMessage;
-
         this.deleteDialog = document.createElement('etools-dialog');
         this.deleteDialog.size = 'md';
         this.deleteDialog.okBtnText = 'Yes';
@@ -377,8 +374,8 @@ Custom property | Description | Default
           this._onDeleteConfirmation(event);
         }.bind(this));
 
-        Polymer.dom(document.querySelector('body')).appendChild(this.deleteDialog);
-        Polymer.dom(this.deleteDialog.root).querySelector('paper-dialog-scrollable').appendChild(deleteConfirmationContent);
+        document.querySelector('body').appendChild(this.deleteDialog);
+          this.deleteDialog.querySelector('#dynamicContent').innerHTML = this.deleteConfirmationMessage;
       },
 
       _printLightDom: function(children) {
